@@ -1,52 +1,59 @@
-import { useState } from 'react';
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
+import { useState, useCallback, memo } from 'react';
+import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 
-
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-
-let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41]
-});
-L.Marker.prototype.options.icon = DefaultIcon;
-
-const LocationPicker = ({ onLocationSelect }) => {
-    
-    const [position, setPosition] = useState({ lat: 6.9271, lng: 79.8612 });
-
-    const LocationMarker = () => {
-        useMapEvents({
-            click(e) {
-                setPosition(e.latlng);
-                onLocationSelect(e.latlng);
-            },
-        });
-        return position === null ? null : <Marker position={position}></Marker>;
-    };
-
-    return (
-        <div className="h-64 w-full rounded-xl overflow-hidden border border-gray-300 relative z-0">
-            <MapContainer 
-                center={position} 
-                zoom={13} 
-                style={{ height: "100%", width: "100%" }}
-            >
-                <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; OpenStreetMap'
-                />
-                <LocationMarker />
-            </MapContainer>
-            <div className="absolute bottom-2 left-2 bg-white px-2 py-1 rounded text-xs font-bold shadow z-[1000]">
-                Tap map to set location
-            </div>
-        </div>
-    );
+const containerStyle = {
+  width: '100%',
+  height: '100%',
+  borderRadius: '0.75rem' // Rounded-xl matching your UI
 };
 
-export default LocationPicker;
+// Default Center (Colombo)
+const defaultCenter = {
+  lat: 6.9271,
+  lng: 79.8612
+};
+
+const LocationPicker = ({ onLocationSelect }) => {
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+  });
+
+  const [markerPosition, setMarkerPosition] = useState(defaultCenter);
+
+  const onMapClick = useCallback((e) => {
+    const lat = e.latLng.lat();
+    const lng = e.latLng.lng();
+    
+    setMarkerPosition({ lat, lng });
+    onLocationSelect({ lat, lng }); // Send coordinates to parent form
+  }, [onLocationSelect]);
+
+  if (!isLoaded) return <div className="h-64 w-full bg-gray-100 animate-pulse rounded-xl flex items-center justify-center text-gray-400">Loading Maps...</div>;
+
+  return (
+    <div className="h-64 w-full rounded-xl overflow-hidden border border-gray-300 relative">
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={defaultCenter}
+        zoom={13}
+        onClick={onMapClick}
+        options={{
+            streetViewControl: false,
+            mapTypeControl: false,
+            fullscreenControl: false,
+            zoomControl: true,
+        }}
+      >
+        <Marker position={markerPosition} />
+      </GoogleMap>
+      
+      {/* Floating Helper Text */}
+      <div className="absolute bottom-2 left-2 bg-white/90 px-3 py-1 rounded-md text-xs font-bold shadow-md text-gray-700 z-10 backdrop-blur-sm">
+        📍 Tap anywhere to set pickup location
+      </div>
+    </div>
+  );
+};
+
+export default memo(LocationPicker);
