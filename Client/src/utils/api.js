@@ -1,13 +1,26 @@
 import axios from 'axios';
 
+
+let rawUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+
+if (rawUrl.endsWith('/')) {
+    rawUrl = rawUrl.slice(0, -1);
+}
+
+
+const baseURL = rawUrl.endsWith('/api') ? rawUrl : `${rawUrl}/api`;
+
+console.log("🔗 API Connected to:", baseURL); 
+
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api', 
+    baseURL: baseURL,
     headers: {
         'Content-Type': 'application/json'
     }
 });
 
-// Automatically add the token to every request if it exists
+
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
