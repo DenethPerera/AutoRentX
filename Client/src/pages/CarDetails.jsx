@@ -21,7 +21,7 @@ const CarDetails = () => {
     const rating = car?.rating || 4.8; 
     const reviewCount = car?.numReviews || 12;
 
-    // 1. Load Google Maps API
+    
     const { isLoaded } = useJsApiLoader({
         id: 'google-map-script',
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
@@ -90,7 +90,7 @@ const CarDetails = () => {
 
     return (
         <div className="bg-gray-50 min-h-screen pb-20">
-            {/* Header / Breadcrumb */}
+            
             <div className="bg-white border-b border-gray-200">
                 <div className="container mx-auto px-6 py-4">
                     <Link to="/cars" className="flex items-center text-gray-500 hover:text-blue-600 transition w-fit">
@@ -102,10 +102,10 @@ const CarDetails = () => {
             <div className="container mx-auto px-6 py-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
                     
-                    {/* LEFT COLUMN */}
+                    
                     <div className="lg:col-span-2 space-y-8">
                         
-                        {/* Main Image */}
+                        
                         <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 p-2">
                             <img 
                                 src={car.imageUrl || "https://via.placeholder.com/800x500"} 
@@ -114,7 +114,7 @@ const CarDetails = () => {
                             />
                         </div>
 
-                        {/* Title & Stats */}
+                        
                         <div>
                             <div className="flex justify-between items-start mb-2">
                                 <div>
@@ -138,7 +138,7 @@ const CarDetails = () => {
                                 </span>
                             </div>
 
-                            {/* Specs Grid */}
+                           
                             <div className="grid grid-cols-3 gap-4 mt-6">
                                 <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center justify-center text-center">
                                     <Gauge className="w-6 h-6 text-blue-600 mb-2" />
@@ -158,7 +158,7 @@ const CarDetails = () => {
                             </div>
                         </div>
 
-                        {/* Description */}
+                        
                         <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
                             <h2 className="text-xl font-bold mb-4">About this car</h2>
                             <p className="text-gray-600 leading-relaxed">
@@ -166,18 +166,18 @@ const CarDetails = () => {
                             </p>
                         </div>
 
-                        {/* 📍 GOOGLE MAPS SECTION */}
+                       
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mt-8">
                             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                                 <MapPin className="w-5 h-5 text-blue-600" /> Pickup Location
                             </h3>
                             
-                            {/* Check if API is loaded AND if car has coordinates */}
+                           
                             {isLoaded && car.coordinates && car.coordinates.lat ? (
                                 <div className="h-72 rounded-xl overflow-hidden border border-gray-200">
                                     <GoogleMap
                                         mapContainerStyle={{ width: '100%', height: '100%' }}
-                                        center={car.coordinates} // { lat: ..., lng: ... }
+                                        center={car.coordinates} 
                                         zoom={15}
                                         options={{ 
                                             disableDefaultUI: false, 
@@ -202,14 +202,14 @@ const CarDetails = () => {
                         <ReviewSection carId={id} />
                     </div>
 
-                    {/* RIGHT COLUMN: Sticky Booking Card */}
+                   
                     <div className="relative">
                         <div className="sticky top-10 space-y-6">
                             
                             <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
                                 <div className="flex justify-between items-end border-b border-gray-100 pb-4 mb-6">
                                     <div>
-                                        <span className="text-3xl font-bold text-gray-900">${car.pricePerDay}</span>
+                                        <span className="text-3xl font-bold text-gray-900">LKR {car.pricePerDay}</span>
                                         <span className="text-gray-500"> / day</span>
                                     </div>
                                     <div className="flex items-center gap-1 text-sm font-bold text-gray-800">
@@ -239,12 +239,12 @@ const CarDetails = () => {
                                 {totalPrice > 0 && (
                                     <div className="mt-6 bg-blue-50 p-4 rounded-xl">
                                         <div className="flex justify-between text-blue-900 mb-1">
-                                            <span>${car.pricePerDay} x {totalPrice/car.pricePerDay} days</span>
-                                            <span>${totalPrice}</span>
+                                            <span>LKR {car.pricePerDay} x {totalPrice/car.pricePerDay} days</span>
+                                            <span>LKR {totalPrice}</span>
                                         </div>
                                         <div className="flex justify-between text-blue-900 font-bold text-lg border-t border-blue-200 pt-2 mt-2">
                                             <span>Total</span>
-                                            <span>${totalPrice}</span>
+                                            <span>LKR {totalPrice}</span>
                                         </div>
                                     </div>
                                 )}
